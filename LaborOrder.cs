@@ -30,4 +30,8 @@ public struct LaborOrder
         orderNumber = ++orderCount;
     }
 
+    public LaborTypes getLaborType() {
+        return (LaborTypes)laborType;
+    }
+
 }
