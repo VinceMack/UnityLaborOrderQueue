@@ -34,25 +34,36 @@ public class LaborOrderManager : MonoBehaviour
     }
 
     void assignPawn(){
-        // dequeue a pawn and assign it a labor order that matches the first labor order in the list of labor queues at the X index of the pawn's queueAnswerPriority
-        // create a loop to iterate through 0-4 the list of labor queues
-    
-        // dequeue a pawn
-        Pawn pawn = pawns.Dequeue();
 
-        // Dequeue a pawn.
-        // Iterate through the list of labor queues and find the first labor order that matches a priority in the pawn's queueAnswerPriority array (start at index 0 and increment by 1 each iteration)
-        // If a match is found, assign the pawn to the labor order and start the coroutine to complete the labor order
-        // If no match is found, add the pawn back to the queue
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 20; j++) {
-                if (laborQueues[j].Count > 0 && pawn.queueAnswerPriority[i].Contains(laborQueues[j].Peek().getLaborType())) {
-                    pawn.currentLaborOrder = laborQueues[j].Dequeue();
-                    StartCoroutine(pawn.completeCurrentLaborOrder());
-                    return;
+        // print the number of pawns and labor orders
+        //Debug.Log("Pawns: " + pawns.Count + " Labor Orders: " + laborQueues.Sum(x => x.Count));
+
+        try
+        {
+            // dequeue a pawn
+            Pawn pawn = pawns.Dequeue();
+
+            // Dequeue a pawn.
+            // Iterate through the list of labor queues and find the first labor order that matches a priority in the pawn's queueAnswerPriority array (start at index 0 and increment by 1 each iteration)
+            // If a match is found, assign the pawn to the labor order and start the coroutine to complete the labor order
+            // If no match is found, add the pawn back to the queue
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 20; j++) {
+                    if (laborQueues[j].Count > 0 && pawn.queueAnswerPriority[i].Contains(laborQueues[j].Peek().getLaborType())) {
+                        pawn.currentLaborOrder = laborQueues[j].Dequeue();
+                        StartCoroutine(pawn.completeCurrentLaborOrder());
+                        return;
+                    }
                 }
             }
         }
+        catch (System.Exception)
+        { 
+            //throw;
+        }
+
+        // print the number of pawns and labor orders
+        //Debug.Log("Pawns: " + pawns.Count + " Labor Orders: " + laborQueues.Sum(x => x.Count));
     }
 
     // Start is called before the first frame update
@@ -73,7 +84,7 @@ public class LaborOrderManager : MonoBehaviour
         int laborOrderToAdd = 5;
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < laborOrderToAdd; j++) {
-                laborQueues[i].Enqueue(new LaborOrder((LaborTypes)i, UnityEngine.Random.Range(3, 10)));
+                laborQueues[i].Enqueue(new LaborOrder((LaborType)i, UnityEngine.Random.Range(3, 10)));
             }
         }
 
@@ -88,11 +99,7 @@ public class LaborOrderManager : MonoBehaviour
     void FixedUpdate()
     {
         // assure there are pawns and labor orders to assign
-        if (pawns.Count > 0 && getTotalLaborOrders() > 0) {
-
-            // print the number of pawns and labor orders
-            //Debug.Log("Pawns: " + pawns.Count + " Labor Orders: " + laborQueues.Sum(x => x.Count));
-
+        if (getTotalLaborOrders() > 0) {
             // assign a pawn to a labor order
             assignPawn();
         }
